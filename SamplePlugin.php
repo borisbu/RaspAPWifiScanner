@@ -6,7 +6,7 @@
  * @description A sample user plugin to extend RaspAP's functionality
  * @author      Bill Zimmerman <billzimmerman@gmail.com>
  *              Special thanks to GitHub user @assachs 
- * @license     https://github.com/raspap/raspap-webgui/blob/master/LICENSE
+ * @license     https://github.com/RaspAP/SamplePlugin/blob/master/LICENSE
  */
 
 namespace RaspAP\Plugins\SamplePlugin;
