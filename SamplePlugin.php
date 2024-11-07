@@ -13,7 +13,6 @@ namespace RaspAP\Plugins\SamplePlugin;
 
 use RaspAP\Plugins\PluginInterface;
 use RaspAP\UI\Sidebar;
-use RaspAP\Plugins\PluginManager;
 
 class SamplePlugin implements PluginInterface
 {
@@ -57,7 +56,7 @@ class SamplePlugin implements PluginInterface
      * @param string $page the current page route
      * @param PluginManager $pluginManager an instance of the PluginManager
      */
-    public function handlePageAction(string $page, PluginManager $pluginManager): bool
+    public function handlePageAction(string $page): bool
     {
         // Verify that this plugin should handle the page
         if (str_starts_with($page, "/plugin__" . $this->getName())) {
@@ -129,19 +128,34 @@ class SamplePlugin implements PluginInterface
             // pass session var to template data after processing page actions
             $__template_data['apiKey'] = $_SESSION['apiKey'];
 
-            /**
-             * Render the template and output it
-             * @param string $pluginName
-             * @param string $templateName should match the parent template in /plugins/SamplePlugin/templates
-             * @param array $__template_data and any other variables passed to the template renderer
-             */
-            echo $pluginManager->renderTemplate($this->getName(), 'sample', compact(
+            echo $this->renderTemplate('sample', compact(
                 "status",
                 "__template_data"
             ));
             return true;
         }
         return false;
+    }
+
+    /**
+     * Renders a template from inside a plugin directory
+     * @param string $templateName
+     * @param array $__data
+     */
+    public function renderTemplate(string $templateName, array $__data = []): string
+    {
+        $templateFile = "{$this->pluginPath}/{$this->getName()}/templates/{$templateName}.php";
+
+        if (!file_exists($templateFile)) {
+            return "Template file {$templateFile} not found.";
+        }
+        if (!empty($__data)) {
+            extract($__data);
+        }
+
+        ob_start();
+        include $templateFile;
+        return ob_get_clean();
     }
 
     /**
