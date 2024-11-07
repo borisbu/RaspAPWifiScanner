@@ -1,7 +1,7 @@
   <?php ob_start() ?>
     <?php if (!RASPI_MONITOR_ENABLED) : ?>
     <input type="submit" class="btn btn-outline btn-primary" name="saveSettings" value="<?php echo _("Save settings"); ?>" />
-        <?php if ($serviceStatus == 'down') : ?>
+        <?php if ($__template_data['serviceStatus'] == 'down') : ?>
         <input type="submit" class="btn btn-success" name="startSampleService" value="<?php echo _("Start Sample service"); ?>" />
         <?php else : ?>
         <input type="submit" class="btn btn-warning" name="stopSampleService" value="<?php echo _("Stop Sample service"); ?>" />

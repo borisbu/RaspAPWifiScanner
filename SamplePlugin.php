@@ -68,7 +68,7 @@ class SamplePlugin implements PluginInterface {
                 'description' => _('A sample user plugin to extend RaspAP'),
                 'author' => _('A. Plugin Author'),
                 'icon' => 'fas fa-plug', // icon should be the same used for Sidebar
-                'serviceStatus' => 'up', // plugin may optionally return a service status
+                'serviceStatus' => $this->getServiceStatus(), // plugin may optionally return a service status
                 'serviceName' => 'sample.service', // an optional service name
                 'action' => 'plugin__'.$this->getName(), // expected by Plugin Manager; do not edit
                 'pluginName' => $this->getName(), // required for template rendering; do not edit
@@ -107,6 +107,7 @@ class SamplePlugin implements PluginInterface {
                     // Example of starting a service with exec():
                     // exec('sudo /bin/systemctl start sample.service', $return);
                     // Note: the www-user must have execute permissions in raspap.sudoers
+                    $_SESSION['serviceStatus'] = 'up';
                     foreach ($return as $line) { // collect any returned values and add them to the StatusMessage object
                         $status->addMessage($line, 'info');
                     }
@@ -115,14 +116,16 @@ class SamplePlugin implements PluginInterface {
                     // Example of stopping a a service with exec():
                     // exec('sudo /bin/systemctl stop sample.service', $return);
                     // Note: the www-user must have execute permissions in raspap.sudoers
+                    $_SESSION['serviceStatus'] = 'down';
                     foreach ($return as $line) {
                         $status->addMessage($line, 'info'); // collect any returned values and add them to the StatusMessage object
                     }
                 }
             }
 
-            // pass apiKey to template data after processing page actions
+            // pass session vars to template data after processing page actions
             $__template_data['apiKey'] = $_SESSION['apiKey'];
+            $__template_data['serviceStatus'] =  $_SESSION['serviceStatus'];
 
             /**
              * Render the template and output it
@@ -153,7 +156,27 @@ class SamplePlugin implements PluginInterface {
         return $status;
     }
 
-    public function getName(): string {
+    /**
+     * Returns a hypothetical service status
+     * @return string $status
+     */
+    public function getServiceStatus(): string
+    {
+        /* A default value is used here for demo purposes.
+         *
+         * An example of fetching a process or service status is:
+         * exec('pidof some_process | wc -l', $return);
+         * $state = ($return[0] > 0);
+         * $status = $state ? "up" : "down";
+         *
+         * @note "up" and "down" correspond to the .service-status-* CSS classes
+         */
+        $status = "up";
+        return $status;
+    }
+
+    public function getName(): string
+    {
         return basename(str_replace('\\', '/', static::class));
     } 
 
