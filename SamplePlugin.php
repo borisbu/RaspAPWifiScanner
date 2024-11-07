@@ -15,12 +15,14 @@ use RaspAP\Plugins\PluginInterface;
 use RaspAP\UI\Sidebar;
 use RaspAP\Plugins\PluginManager;
 
-class SamplePlugin implements PluginInterface {
+class SamplePlugin implements PluginInterface
+{
 
     private string $pluginPath;
     private string $pluginName;
 
-    public function __construct(string $pluginPath, string $pluginName) {
+    public function __construct(string $pluginPath, string $pluginName)
+    {
         $this->pluginPath = $pluginPath;
         $this->pluginName = $pluginName;
     }
@@ -38,7 +40,8 @@ class SamplePlugin implements PluginInterface {
      * @see src/RaspAP/UI/Sidebar.php
      * @see https://fontawesome.com/icons
      */
-    public function initialize(Sidebar $sidebar): void {
+    public function initialize(Sidebar $sidebar): void
+    {
 
         $label = _('Sample Plugin');
         $icon = 'fas fa-plug';
