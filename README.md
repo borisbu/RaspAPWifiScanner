@@ -20,7 +20,7 @@ The `SamplePlugin` requires an installation of [RaspAP](https://github.com/RaspA
    cd /var/www/html
    sudo mkdir plugins
    ```
-3. Change to the `/plugins` directory, clone your SamplePlugin fork and change to it:
+3. Change to the `/plugins` directory, clone your `SamplePlugin` fork and change to it:
    ```
    cd plugins
    sudo git clone https://github.com/[your-username]/SamplePlugin
@@ -29,7 +29,7 @@ The `SamplePlugin` requires an installation of [RaspAP](https://github.com/RaspA
 4. The PluginManager will autoload the plugin; a new 'Sample Plugin' item will appear in the sidebar.
 
 ## Scope of functionality
-The `SamplePlugin` implements the methods needed for basic plugin functionality. It initalizes a `Sidebar` object and adds a custom navigation item. User input is processed with `handlePageAction()` and some common functions are handled, including:
+The `SamplePlugin` implements the methods needed for basic plugin functionality. It initalizes a `Sidebar` object and adds a custom navigation item. User input is processed with `handlePageAction()` and some common operations are performed, including:
 
 1. Saving plugin settings
 2. Starting a sample service
@@ -44,14 +44,14 @@ The `SamplePlugin` demonstrates basic plugin functions without being overly comp
 Most plugin authors will probably begin by renaming `SamplePlugin` to something unique. The `PluginManager` expects the plugin folder, file, namespace and class to follow the same naming convention. When renaming the `SamplePlugin` ensure that each of the following entities uses the same plugin name:
 
 
-|  Entity                                        |   Type     |
-|------------------------------------------------|------------|
-| plugins/SamplePlugin                           | folder     |
-| plugins/SamplePlugin/SamplePlugin.php          | file       |
-| namespace RaspAP\Plugins\SamplePlugin          | namespace  |
-| class SamplePlugin implements PluginInterface  | class      |
+|  Entity                                          |   Type     |
+|--------------------------------------------------|------------|
+| `plugins/SamplePlugin`                           | folder     |
+| `plugins/SamplePlugin/SamplePlugin.php`          | file       |
+| `namespace RaspAP\Plugins\SamplePlugin`          | namespace  |
+| `class SamplePlugin implements PluginInterface`  | class      |
 
-That is, replace each occurance of `SamplePlugin` with your plugin name in each of these entities.
+That is, replace each occurrence of `SamplePlugin` with your plugin name in each of these entities.
 
 ### Plugin logic and templates
 Plugin classes and functions are contained in `SamplePlugin.php`. The parent template (`main.php`) and child tab templates are used to render template data. 
@@ -67,7 +67,7 @@ Plugin classes and functions are contained in `SamplePlugin.php`. The parent tem
 │           └── status.php
 ```
 
-You may wish to omit, modify or create new tabs. This is done by editing `main.php` and modifying the contents of the `tabs/` directory.
+You may wish to omit, modify or create new tabs. This is done by editing `main.php` and modifying the contents of the `/tabs` directory.
 
 ### Sidebar item
 The `PluginInterface` exposes an `initalize()` method that is used to create a unique sidebar item. The properties below can be customized for your plugin:
