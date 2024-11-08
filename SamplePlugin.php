@@ -37,6 +37,8 @@ class SamplePlugin implements PluginInterface
         $this->pluginPath = $pluginPath;
         $this->pluginName = $pluginName;
         $this->templateMain = 'main';
+        $this->serviceStatus = 'up';
+        $this->apiKey = '';
 
         if ($loaded = self::loadData()) {
             $this->apiKey = $loaded->getApiKey();
