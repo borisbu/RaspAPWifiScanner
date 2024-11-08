@@ -125,6 +125,7 @@ class SamplePlugin implements PluginInterface
                 'title' => _('Sample Plugin'),
                 'description' => _('A sample user plugin to extend RaspAP'),
                 'author' => _('A. Plugin Author'),
+                'uri' => 'https://github.com/RaspAP/SamplePlugin',
                 'icon' => 'fas fa-plug', // icon should be the same used for Sidebar
                 'serviceStatus' => $this->getServiceStatus(), // plugin may optionally return a service status
                 'serviceName' => 'sample.service', // an optional service name

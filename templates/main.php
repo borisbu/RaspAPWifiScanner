@@ -34,12 +34,14 @@
             <ul class="nav nav-tabs">
                 <li class="nav-item"><a class="nav-link active" id="samplesettingstab" href="#samplesettings" data-bs-toggle="tab"><?php echo _("Settings"); ?></a></li>
                 <li class="nav-item"><a class="nav-link" id="samplestatustab" href="#samplestatus" data-bs-toggle="tab"><?php echo _("Status"); ?></a></li>
+                <li class="nav-item"><a class="nav-link" id="sampleabouttab" href="#sampleabout" data-bs-toggle="tab"><?php echo _("About"); ?></a></li>
             </ul>
 
             <!-- Tab panes -->
             <div class="tab-content">
               <?php echo renderTemplate("tabs/basic", $__template_data, $__template_data['pluginName']) ?>
               <?php echo renderTemplate("tabs/status", $__template_data, $__template_data['pluginName']) ?>
+              <?php echo renderTemplate("tabs/about", $__template_data, $__template_data['pluginName']) ?>
             </div><!-- /.tab-content -->
 
             <?php echo $buttons ?>
