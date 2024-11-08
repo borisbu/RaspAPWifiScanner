@@ -3,6 +3,15 @@
 /**
  * SamplePlugin
  *
+ * You may rename SamplePlugin to whatever you wish. The PluginManager expects the class name,
+ * folder and plugin file to follow the same naming convention. When renaming the plugin
+ * ensure that each of the following are in agreement:
+ *
+ * plugins/SamplePlugin                          (folder)
+ * plugins/SamplePlugin/SamplePlugin.php         (file)
+ * namespace RaspAP\Plugins\SamplePlugin         (namespace)
+ * class SamplePlugin implements PluginInterface (class)
+ *
  * @description A sample user plugin to extend RaspAP's functionality
  * @author      Bill Zimmerman <billzimmerman@gmail.com>
  *              Special thanks to GitHub user @assachs 
@@ -19,21 +28,30 @@ class SamplePlugin implements PluginInterface
 
     private string $pluginPath;
     private string $pluginName;
+    private string $templateMain;
+    private string $apiKey;
+    private string $serviceStatus;
 
     public function __construct(string $pluginPath, string $pluginName)
     {
         $this->pluginPath = $pluginPath;
         $this->pluginName = $pluginName;
+        $this->templateMain = 'main';
+
+        if ($loaded = self::loadData()) {
+            $this->apiKey = $loaded->getApiKey();
+            $this->serviceStatus = $loaded->getServiceStatus();
+        }
     }
 
     /**
      * Initializes SamplePlugin and creates a custom sidebar item. This is the entry point
-     * for creating a custom user plugin; the Plugin Manager will autoload the plugin code.
+     * for creating a custom user plugin; the PluginManager will autoload the plugin code.
      *
      * Replace 'Sample Plugin' below with the label you wish to use in the sidebar.
      * You may specify any icon in the Font Awesome 6.6 free library for the sidebar item.
-     * The page action is handled by a namespaced function provided by the plugin's custom code.
      * The priority value sets the position of the item in the sidebar (lower values = higher priority).
+     * The page action is handled by the plugin's namespaced handlePageAction() method.
      *
      * @param Sidebar $sidebar an instance of the Sidebar
      * @see src/RaspAP/UI/Sidebar.php
@@ -51,17 +69,16 @@ class SamplePlugin implements PluginInterface
     }
 
     /**
-     * Handles a page action by rendering a plugin template
+     * Handles a page action by processing inputs and rendering a plugin template.
      *
      * @param string $page the current page route
-     * @param PluginManager $pluginManager an instance of the PluginManager
      */
     public function handlePageAction(string $page): bool
     {
         // Verify that this plugin should handle the page
         if (str_starts_with($page, "/plugin__" . $this->getName())) {
 
-            // Instantiate StatusMessage object
+            // Instantiate a StatusMessage object
             $status = new \RaspAP\Messages\StatusMessage;
 
             /**
@@ -70,7 +87,7 @@ class SamplePlugin implements PluginInterface
              * 2. startSampleService
              * 3. stopSampleService
              *
-             * Other page actions and custom functions may be added as required.
+             * Other page actions and custom functions may be added as needed.
              */
             if (!RASPI_MONITOR_ENABLED) {
                 if (isset($_POST['saveSettings'])) {
@@ -78,33 +95,28 @@ class SamplePlugin implements PluginInterface
                         // Validate user data
                         $apiKey = trim($_POST['txtapikey']);
                         if (strlen($apiKey) == 0) {
-                            $status->addMessage('Please enter a valid API key', 'danger');
+                            $status->addMessage('Please enter a valid API key', 'warning');
                         } else {
                             $return = $this->saveSampleSettings($status, $apiKey);
                             $status->addMessage('Restarting sample.service', 'info');
-                            // Here you could restart a service, for example:
-                            // exec('sudo /bin/systemctl restart sample.service', $return);
-                            // Note: the www-user must have execute permissions in raspap.sudoers
                         }
                     }
+
                 } elseif (isset($_POST['startSampleService'])) {
                     $status->addMessage('Attempting to start sample.service', 'info');
-                    // Example of starting a service with exec():
-                    // exec('sudo /bin/systemctl start sample.service', $return);
-                    // Note: the www-user must have execute permissions in raspap.sudoers
-                    $_SESSION['serviceStatus'] = 'up';
-                    foreach ($return as $line) { // collect any returned values and add them to the StatusMessage object
-                        $status->addMessage($line, 'info');
-                    }
+                    /* A dummy value is used here for demo purposes.
+                     * One method of fetching a process or service status:
+                     * exec('pidof some_process | wc -l', $return);
+                     * $state = ($return[0] > 0);
+                     * $status = $state ? "up" : "down";
+                     *
+                     * @note "up" and "down" correspond to the .service-status-* CSS classes
+                     */
+                    $this->setServiceStatus('up');
+
                 } elseif (isset($_POST['stopSampleService'])) {
                     $status->addMessage('Attempting to stop sample.service', 'info');
-                    // Example of stopping a a service with exec():
-                    // exec('sudo /bin/systemctl stop sample.service', $return);
-                    // Note: the www-user must have execute permissions in raspap.sudoers
-                    $_SESSION['serviceStatus'] = 'down';
-                    foreach ($return as $line) {
-                        $status->addMessage($line, 'info'); // collect any returned values and add them to the StatusMessage object
-                    }
+                    $this->setServiceStatus('down');
                 }
             }
 
@@ -125,10 +137,10 @@ class SamplePlugin implements PluginInterface
                 'serviceLog' => "● sample.service - raspap-sample\n    Loaded: loaded (/lib/systemd/system/sample.service; enabled;)\n    Active: active (running)"
             ];
 
-            // pass session var to template data after processing page actions
-            $__template_data['apiKey'] = $_SESSION['apiKey'];
+            // update template data from property after processing page actions
+            $__template_data['apiKey'] = $this->getApiKey();
 
-            echo $this->renderTemplate('sample', compact(
+            echo $this->renderTemplate($this->templateMain, compact(
                 "status",
                 "__template_data"
             ));
@@ -167,34 +179,70 @@ class SamplePlugin implements PluginInterface
     public function saveSampleSettings($status, $apiKey)
     {
         $status->addMessage('Saving Sample API key', 'info');
-        // do something with the API key, save to session for demo purposes
-        $_SESSION['apiKey'] = $apiKey;
+        $this->setApiKey($apiKey);
         return $status;
+    }
+
+    // Getter for apiKey
+    public function getApiKey()
+    {
+        return $this->apiKey;
+    }
+
+    // Setter for apiKey
+    public function setApiKey($apiKey)
+    {
+        $this->apiKey = $apiKey;
+        $this->persistData();
     }
 
     /**
      * Returns a hypothetical service status
      * @return string $status
      */
-    public function getServiceStatus(): string
+    public function getServiceStatus()
     {
-        /* A dummy value is used here for demo purposes.
-         *
-         * An example of fetching a process or service status is:
-         * exec('pidof some_process | wc -l', $return);
-         * $state = ($return[0] > 0);
-         * $status = $state ? "up" : "down";
-         *
-         * @note "up" and "down" correspond to the .service-status-* CSS classes
-         */
-        $status = $_SESSION['serviceStatus'] ?? "up";
-        return $status;
+        return $this->serviceStatus;
     }
 
-    public function getName(): string
+    // Setter for service status
+    public function setServiceStatus($status)
+    {
+        $this->serviceStatus = $status;
+        $this->persistData();
+    }
+
+    /* An example method to persist plugin data
+     *
+     * This writes to the volatile /tmp directory which is cleared
+     * on each system boot, so should not be considered as a robust
+     * method of data persistence; it's used here for demo purposes only.
+     *
+     * @note Plugins should avoid use of $_SESSION vars as these are
+     * super globals that may conflict with other user plugins.
+     */
+    public function persistData()
+    {
+        $serialized = serialize($this);
+        file_put_contents("/tmp/plugin__{$this->getName()}.data", $serialized);
+    }
+
+    // Static method to load persisted data
+    public static function loadData(): ?self
+    {
+        $filePath = "/tmp/plugin__".self::getName() .".data";
+        if (file_exists($filePath)) {
+            $data = file_get_contents($filePath);
+            return unserialize($data);
+        }
+        return null;
+    }
+
+    // Returns an abbreviated class name
+    public static function getName(): string
     {
         return basename(str_replace('\\', '/', static::class));
-    } 
+    }
 
 }
 
