@@ -3,9 +3,9 @@
 /**
  * SamplePlugin
  *
- * You may rename SamplePlugin to whatever you wish. The PluginManager expects the class name,
- * folder and plugin file to follow the same naming convention. When renaming the plugin
- * ensure that each of the following are in agreement:
+ * You may rename SamplePlugin to whatever you like. The PluginManager expects the plugin folder,
+ * file, namespace and class to follow the same naming convention. When renaming the SamplePlugin
+ * ensure that each of the following uses your new plugin name:
  *
  * plugins/SamplePlugin                          (folder)
  * plugins/SamplePlugin/SamplePlugin.php         (file)
@@ -16,6 +16,8 @@
  * @author      Bill Zimmerman <billzimmerman@gmail.com>
  *              Special thanks to GitHub user @assachs 
  * @license     https://github.com/RaspAP/SamplePlugin/blob/master/LICENSE
+ * @see         src/RaspAP/Plugins/PluginInterface.php
+ * @see         src/RaspAP/UI/Sidebar.php
  */
 
 namespace RaspAP\Plugins\SamplePlugin;
