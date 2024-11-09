@@ -9,6 +9,7 @@ The `SamplePlugin` implements a `PluginInterface` and is automatically loaded by
  - [Usage](#usage)
  - [Scope of functionality](#scope-of-functionality)
  - [Customizing](#customizing)
+ - [Multiple instances](#multiple-instances)
  - [Publishing your plugin](#publishing-your-plugin)
 
 ## Usage
@@ -98,7 +99,14 @@ www-data ALL=(ALL) NOPASSWD:/bin/systemctl stop sample.service
 www-data ALL=(ALL) NOPASSWD:/bin/systemctl status sample.service
 ```
 
-Wildcards (`*`) and regular expressions are supported by `sudoers` but [care should be taken when using them](https://www.sudo.ws/posts/2022/03/sudo-1.9.10-using-regular-expressions-in-the-sudoers-file/).
+Wildcards ('`*`') and regular expressions are supported by `sudoers` but [care should be taken when using them](https://www.sudo.ws/posts/2022/03/sudo-1.9.10-using-regular-expressions-in-the-sudoers-file/).
+
+## Multiple instances
+The `PluginManager` is a managerial class responsible for locating, instantiating and coordinating plugins. Through the use of namespaces and object data persistence in `SamplePlugin`, any number of user plugins may be installed to `/plugins` and run concurrently.
+
+<img width="619" alt="multiple-highlight" src="https://github.com/user-attachments/assets/2d156efe-8cfc-49e7-b682-219d2db4eeee">
+
+As noted, developers should avoid using PHP's `$_SESSION` object in their plugins to prevent conflicts with other plugin instances. 
 
 ## Publishing your plugin
 The `SamplePlugin` contains an 'About' tab where you may provide author information, a description and link to your project. If you've authored a plugin you feel would be useful to the RaspAP community, you're encouraged to share it in this repo's [Discussions](https://github.com/RaspAP/SamplePlugin/discussions). 
