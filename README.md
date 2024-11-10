@@ -1,7 +1,7 @@
 # SamplePlugin
 This repo provides a starting point to create custom user plugins for RaspAP.
 
-<img width="400" alt="sample" src="https://github.com/user-attachments/assets/cf9a8cf2-7cc7-49e5-9cbe-521ef7d97a4d">
+<img width="400" alt="sample" src="https://github.com/user-attachments/assets/4036e6e6-3e70-42b2-a0af-862cebccc786">
 
 The `SamplePlugin` implements a `PluginInterface` and is automatically loaded by RaspAP's `PluginManager`. Several common plugin functions are included, as well as an example method for persisting data in plugin instances. Each plugin has its own namespace, meaning that classes and functions are organized to avoid naming conflicts. Plugins are self-contained and render their own templates from inside the `/templates` directory.
 
