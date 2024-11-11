@@ -16,7 +16,7 @@ The `SamplePlugin` implements a `PluginInterface` and is automatically loaded by
 The `SamplePlugin` requires an installation of [RaspAP](https://github.com/RaspAP/raspap-webgui), either via the [Quick install](https://docs.raspap.com/quick/) method or with a [Docker container](https://docs.raspap.com/docker/). The default application path `/var/www/html` is used here. If you've chosen a different install location, substitute this in the steps below.
 
 1. Begin by creating a fork of this repository.
-2. SSH into the device hosting RaspAP, change to the install location and create a `/plugins` directory.
+2. Change to the install location and create a `/plugins` directory.
    ```
    cd /var/www/html
    sudo mkdir plugins
@@ -27,7 +27,7 @@ The `SamplePlugin` requires an installation of [RaspAP](https://github.com/RaspA
    sudo git clone https://github.com/[your-username]/SamplePlugin
    cd SamplePlugin
    ```
-4. The `PluginManager` will autoload the plugin; a new 'Sample Plugin' item will appear in the sidebar.
+4. The `PluginManager` will autoload the plugin; a new **Sample Plugin** item will appear in the sidebar.
 
 ## Scope of functionality
 The `SamplePlugin` implements the server-side methods needed to support basic plugin functionality. It initalizes a `Sidebar` object and adds a custom navigation item. User input is processed with `handlePageAction()` and several common operations are performed, including:
@@ -36,12 +36,14 @@ The `SamplePlugin` implements the server-side methods needed to support basic pl
 2. Starting a sample service
 3. Stopping a sample service
 
-Template data is then collected in `$__template_data` and rendered by the `main.php` template file located in `/templates`. Property get/set methods are demonstrated with `apiKey` and `serviceStatus` values. A method is then used in `persistData()` to save the `SamplePlugin` object data. Importantly, `SamplePlugin` does _not_ use the PHP `$_SESSION` object as this super global can lead to conflicts with other user plugins.
+Template data is then collected in `$__template_data` and rendered by the `main.php` template file located in `/templates`. Property get/set methods are demonstrated with `apiKey` and `serviceStatus` values. A method is then used in `persistData()` to save the `SamplePlugin` object data.
 
-On the front-end, Bootstrap's [form validation](https://getbootstrap.com/docs/5.3/forms/validation/) is used to validate user input. A custom JavaScript function is used to generate a random `apiKey` value. The `sample.service` LED indicator is functional, as are the service stop/start form buttons.
+> Importantly, SamplePlugin does _not_ use the PHP `$_SESSION` object. Known as a "superglobal", or automatic global variable, this is available in all scopes throughout a script. Using the `$_SESSION` object in a plugin context can lead to conflicts with other plugin instances.
+
+On the front-end, Bootstrap's [form validation](https://getbootstrap.com/docs/5.3/forms/validation/) is used to validate user input. A custom JavaScript function responds to a click event to generate a random `apiKey` value. The `sample.service` LED indicator is functional, as are the service stop/start form buttons.
 
 ## Customizing
-The `SamplePlugin` demonstrates basic plugin functions without being overly complex. It's designed with best practices in mind and made to be extended and customized by developers.
+The `SamplePlugin` demonstrates basic plugin functions without being overly complex. It's designed with best practices in mind and made to be easily modified by developers.
 
 ### Unique plugin names
 Most plugin authors will probably begin by renaming `SamplePlugin` to something unique. The `PluginManager` expects the plugin folder, file, namespace and class to follow the same naming convention. When renaming the `SamplePlugin` ensure that each of the following entities uses the same plugin name:
@@ -106,7 +108,9 @@ The `PluginManager` is a managerial class responsible for locating, instantiatin
 
 <img width="619" alt="multiple-highlight" src="https://github.com/user-attachments/assets/2d156efe-8cfc-49e7-b682-219d2db4eeee">
 
-As noted, developers should avoid using PHP's `$_SESSION` object in their plugins to prevent conflicts with other plugin instances. 
+As previously noted, developers should avoid using PHP's `$_SESSION` object in their plugins to prevent conflicts with other plugin instances. 
+
+> The `persistData()` function writes serialized data to the volatile `/tmp` directory which is cleared on each system boot. For this reason, it should _not_ be used as a method of permanent data storage. However, this functionality roughly approximates PHP's `$_SESSION` object; the difference being that each plugin's data is isolated from other plugin instances.
 
 ## Publishing your plugin
-The `SamplePlugin` contains an 'About' tab where you may provide author information, a description and link to your project. If you've authored a plugin you feel would be useful to the RaspAP community, you're encouraged to share it in this repo's [Discussions](https://github.com/RaspAP/SamplePlugin/discussions). 
+The `SamplePlugin` contains an "About" tab where you may provide author information, a description and link to your project. If you've authored a plugin you feel would be useful to the RaspAP community, you're encouraged to share it in this repo's [discussions](https://github.com/RaspAP/SamplePlugin/discussions). 
