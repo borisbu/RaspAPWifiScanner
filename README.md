@@ -3,7 +3,7 @@ This repo provides a starting point to create custom user plugins for RaspAP.
 
 <img width="400" alt="sample" src="https://github.com/user-attachments/assets/4036e6e6-3e70-42b2-a0af-862cebccc786">
 
-The `SamplePlugin` implements a `PluginInterface` and is automatically loaded by RaspAP's `PluginManager`. Several common plugin functions are included, as well as an example method for persisting data in plugin instances. Each plugin has its own namespace, meaning that classes and functions are organized to avoid naming conflicts. Plugins are self-contained and render their own templates from inside the `/templates` directory.
+The `SamplePlugin` implements a `PluginInterface` and is automatically loaded by RaspAP's `PluginManager`. Several common plugin functions are included, as well as an example method for persisting data in plugin instances. Each plugin has its own namespace, meaning that classes and functions are organized to avoid naming conflicts. Plugins are self-contained and render templates from inside their own `/templates` directory.
 
 ## Contents
  - [Usage](#usage)
@@ -21,13 +21,12 @@ The `SamplePlugin` requires an installation of [RaspAP](https://github.com/RaspA
    cd /var/www/html
    sudo mkdir plugins
    ```
-3. Change to the `/plugins` directory, clone your `SamplePlugin` fork and change to it:
+3. Change to the `/plugins` directory and clone your `SamplePlugin` fork:
    ```
    cd plugins
    sudo git clone https://github.com/[your-username]/SamplePlugin
-   cd SamplePlugin
    ```
-4. The `PluginManager` will autoload the plugin; a new **Sample Plugin** item will appear in the sidebar.
+4. The `PluginManager` will detect and autoload the plugin; a new **Sample Plugin** item will appear in the sidebar.
 
 ## Scope of functionality
 The `SamplePlugin` implements the server-side methods needed to support basic plugin functionality. It initalizes a `Sidebar` object and adds a custom navigation item. User input is processed with `handlePageAction()` and several common operations are performed, including:
