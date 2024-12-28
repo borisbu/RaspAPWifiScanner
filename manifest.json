@@ -1,0 +1,32 @@
+{
+  "name": "Sample Plugin",
+  "version": "v1.0.0-beta",
+  "description": "A sample user plugin to extend RaspAP",
+  "author": "A. Plugin Author",
+  "author_uri": "https://github.com/",
+  "plugin_uri": "https://github.com/RaspAP/SamplePlugin",
+  "license": "GPL-3.0",
+  "namespace": "RaspAP\\Plugins\\SamplePlugin",
+  "configuration": [
+    {
+      "source": "config/myplugin.conf",
+      "destination": "/etc/myplugin.conf"
+    }
+  ],
+  "default_locale": "en_US",
+  "dependencies": {
+    "sample-server": "1.0"
+  },
+  "icon": "fas fa-plug",
+  "manifest_version": "1.0",
+  "sudoers": [
+    "www-data ALL=(ALL) NOPASSWD:/bin/systemctl * sample.service",
+    "www-data ALL=(ALL) NOPASSWD:/bin/cat /etc/myplugin.conf",
+    "www-data ALL=(ALL) NOPASSWD:/bin/cp /tmp/myplugin.conf /etc/myplugin.conf"
+  ],
+  "user_nonprivileged": {
+    "name": "sampleuser",
+    "pass": "samplepass"
+  }
+}
+
