@@ -102,6 +102,9 @@ www-data ALL=(ALL) NOPASSWD:/bin/systemctl status sample.service
 
 Wildcards ('`*`') and regular expressions are supported by `sudoers` but [care should be taken when using them](https://www.sudo.ws/posts/2022/03/sudo-1.9.10-using-regular-expressions-in-the-sudoers-file/).
 
+### Manifest
+The [manifest.json](https://github.com/RaspAP/SamplePlugin/blob/master/manifest.json) file may be used to specify basic metadata about your plugin such as its name, version, description, author and so on. If your plugin has external dependencies, configuration files, needs special permissions or requires a non-priviledged user, these may also be defined in their respective fields. This `manifest.json` is required if you'd like to have your plugin included in RaspAP's official [plugins repo](https://github.com/RaspAP/plugins). Your plugin will then be available via RaspAP's one-click `PluginInstaller` and plugin management UI. 
+
 ## Multiple instances
 The `PluginManager` is a managerial class responsible for locating, instantiating and coordinating plugins. Through the use of namespaces and object data persistence in `SamplePlugin`, any number of user plugins may be installed to `/plugins` and run concurrently.
 
