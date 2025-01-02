@@ -102,9 +102,6 @@ www-data ALL=(ALL) NOPASSWD:/bin/systemctl status sample.service
 
 Wildcards ('`*`') and regular expressions are supported by `sudoers` but [care should be taken when using them](https://www.sudo.ws/posts/2022/03/sudo-1.9.10-using-regular-expressions-in-the-sudoers-file/).
 
-### Manifest
-The [manifest.json](https://github.com/RaspAP/SamplePlugin/blob/master/manifest.json) file may be used to specify basic metadata about your plugin such as its name, version, description, author and so on. If your plugin has external dependencies, configuration files, needs special permissions or requires a non-priviledged user, these may also be defined in their respective fields. This `manifest.json` is required if you'd like to have your plugin included in RaspAP's official [plugins repo](https://github.com/RaspAP/plugins). Your plugin will then be available via RaspAP's one-click `PluginInstaller` and plugin management UI. 
-
 ## Multiple instances
 The `PluginManager` is a managerial class responsible for locating, instantiating and coordinating plugins. Through the use of namespaces and object data persistence in `SamplePlugin`, any number of user plugins may be installed to `/plugins` and run concurrently.
 
@@ -115,4 +112,9 @@ As previously noted, developers should avoid using PHP's `$_SESSION` object in t
 > The `persistData()` function writes serialized data to the volatile `/tmp` directory which is cleared on each system boot. For this reason, it should _not_ be used as a method of permanent data storage. However, this functionality roughly approximates PHP's `$_SESSION` object; the difference being that each plugin's data is isolated from other plugin instances.
 
 ## Publishing your plugin
-The `SamplePlugin` contains an "About" tab where you may provide author information, a description and link to your project. If you've authored a plugin you feel would be useful to the RaspAP community, you're encouraged to share it in this repo's [discussions](https://github.com/RaspAP/SamplePlugin/discussions). 
+The `SamplePlugin` contains an "About" tab where you may provide author information, a description and link to your project. If you'd like your plugin to be included in RaspAP's official [plugins repo](https://github.com/RaspAP/plugins) and made available via the one-click Plugin Installer UI, the `manifest.json` file must be populated. This is described in the next section.
+
+### Manifest
+The plugin [manifest](https://github.com/RaspAP/SamplePlugin/blob/master/manifest.json) is used to specify basic metadata about your plugin such as its name, version, description, author and so on. If your plugin has external dependencies, configuration files, needs special permissions or requires a non-priviledged user, these may also be defined in their respective fields. Refer to the [SocksProxy plugin manifest](https://github.com/billz/SocksProxy/blob/master/manifest.json) for a working example.
+
+If you've authored a plugin you feel would be useful to the RaspAP community, you're encouraged to share it in the [discussions](https://github.com/RaspAP/SamplePlugin/discussions). 
