@@ -1,55 +1,58 @@
-  <?php ob_start() ?>
-    <?php if (!RASPI_MONITOR_ENABLED) : ?>
-    <input type="submit" class="btn btn-outline btn-primary" name="saveSettings" value="<?php echo _("Save settings"); ?>" />
-        <?php if ($__template_data['serviceStatus'] == 'down') : ?>
-        <input type="submit" class="btn btn-success" name="startSampleService" value="<?php echo _("Start Sample service"); ?>" />
-        <?php else : ?>
-        <input type="submit" class="btn btn-warning" name="stopSampleService" value="<?php echo _("Stop Sample service"); ?>" />
-        <?php endif; ?>
-    <?php endif ?>
-  <?php $buttons = ob_get_clean(); ob_end_clean() ?>
- 
-  <div class="row">
-    <div class="col-lg-12">
-      <div class="card">
-        <div class="card-header">
-          <div class="row">
-            <div class="col">
-              <i class="<?php echo $__template_data['icon']; ?> me-2"></i><?php echo htmlspecialchars($__template_data['title']); ?>
-            </div>
+<div class="row" id="wifiClientContent">
+  <div class="col-lg-12">
+    <div class="card">
+      <div class="card-header">
+        <div class="row align-items-center">
+          <div class="col">
+            <i class="fas fa-wifi me-2"></i><?php echo _("WiFi client"); ?>
+          </div>
             <div class="col">
               <button class="btn btn-light btn-icon-split btn-sm service-status float-end">
-                <span class="icon text-gray-600"><i class="fas fa-circle service-status-<?php echo $__template_data['serviceStatus']; ?>"></i></span>
-                <span class="text service-status"><?php echo $__template_data['serviceName']; ?></span>
+                <span class="icon"><i class="fas fa-circle service-status-<?php echo $ifaceStatus ?>"></i></span>
+                <span class="text service-status"><?php echo strtolower($clientInterface) .' '. _($ifaceStatus) ?></span>
               </button>
             </div>
-          </div><!-- /.row -->
-        </div><!-- /.card-header -->
-
-        <div class="card-body">
+        </div><!-- /.row -->
+      </div><!-- /.card-header -->
+      <div class="card-body">
         <?php $status->showMessages(); ?>
-          <form role="form" action="<?php echo $__template_data['action']; ?>" method="POST" class="needs-validation" novalidate>
-            <?php echo CSRFTokenFieldTag() ?>
-            <!-- Nav tabs -->
-            <ul class="nav nav-tabs">
-                <li class="nav-item"><a class="nav-link active" id="samplesettingstab" href="#samplesettings" data-bs-toggle="tab"><?php echo _("Settings"); ?></a></li>
-                <li class="nav-item"><a class="nav-link" id="samplestatustab" href="#samplestatus" data-bs-toggle="tab"><?php echo _("Status"); ?></a></li>
-                <li class="nav-item"><a class="nav-link" id="sampleabouttab" href="#sampleabout" data-bs-toggle="tab"><?php echo _("About"); ?></a></li>
-            </ul>
-
-            <!-- Tab panes -->
-            <div class="tab-content">
-              <?php echo renderTemplate("tabs/basic", $__template_data, $__template_data['pluginName']) ?>
-              <?php echo renderTemplate("tabs/status", $__template_data, $__template_data['pluginName']) ?>
-              <?php echo renderTemplate("tabs/about", $__template_data, $__template_data['pluginName']) ?>
-            </div><!-- /.tab-content -->
-
-            <?php echo $buttons ?>
-          </form>
-        </div><!-- /.card-body -->
-
-      <div class="card-footer"><?php echo _("Information provided by ". $__template_data['serviceName']); ?></div>
+        <div class="row align-items-center">
+          <div class="col">
+            <h4 class="m-0 text-nowrap"><?php echo _("Client settings"); ?></h4>
+          </div>
+          <div class="col">
+            <button type="button" class="btn btn-info float-end js-reload-wifi-stations"><?php echo _("Rescan"); ?></button>
+          </div>
+        </div>
+        <div class="row" id="wpaConf">
+          <div class="col">
+            <form method="POST" action="wpa_conf" name="wpa_conf_form">
+              <?php echo CSRFTokenFieldTag() ?>
+              <input type="hidden" name="client_settings" ?>
+              <div class="js-wifi-stations loading-spinner"></div>
+            </form>
+          </div>
+        </div>
+      </div><!-- ./ card-body -->
+      <div class="card-footer"><?php echo _("<strong>Note:</strong> WEP access points appear as 'Open'. RaspAP does not currently support connecting to WEP"); ?></div>
     </div><!-- /.card -->
   </div><!-- /.col-lg-12 -->
 </div><!-- /.row -->
+
+<!-- Modal -->
+<div class="modal fade" id="configureClientModal" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+      <div class="modal-title" id="ModalLabel"><i class="fas fa-sync-alt me-2"></i><?php echo _("Configuring WiFi Client"); ?></div>
+      </div>
+      <div class="modal-body">
+        <div class="col-md-12 mb-3 mt-1"><?php echo _("Configuring Wifi Client Interface..."); ?></div>
+      </div>
+      <div class="modal-footer">
+      <button type="button" class="btn btn-outline btn-primary" data-bs-dismiss="modal"><?php echo _("Close"); ?></button>
+      </div>
+    </div>
+  </div>
+</div>
 

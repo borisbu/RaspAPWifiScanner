@@ -1,0 +1,19 @@
+{
+    "name": "raspap/wifi-scanner",
+    "description": "A WiFi scanning plugin for RaspAP",
+    "type": "raspap-plugin",
+    "require": {
+        "php": ">=7.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "RaspAP\\Plugins\\RaspAPWifiScanner\\": "src/"
+        }
+    },
+    "repositories": [
+        {
+            "type": "path",
+            "url": "../your-other-project"
+        }
+    ]
+} 

@@ -1,31 +1,20 @@
 <?php
 
 /**
- * SamplePlugin
+ * RaspAPWifiScanner
  *
- * You may rename SamplePlugin to whatever you like. The PluginManager expects the plugin folder,
- * file, namespace and class to follow the same naming convention. When renaming the SamplePlugin
- * ensure that each of the following uses your new plugin name:
+ * A WiFi scanning plugin for RaspAP
  *
- * plugins/SamplePlugin                          (folder)
- * plugins/SamplePlugin/SamplePlugin.php         (file)
- * namespace RaspAP\Plugins\SamplePlugin         (namespace)
- * class SamplePlugin implements PluginInterface (class)
- *
- * @description A sample user plugin to extend RaspAP's functionality
- * @author      Bill Zimmerman <billzimmerman@gmail.com>
- *              Special thanks to GitHub user @assachs 
- * @license     https://github.com/RaspAP/SamplePlugin/blob/master/LICENSE
- * @see         src/RaspAP/Plugins/PluginInterface.php
- * @see         src/RaspAP/UI/Sidebar.php
+ * @description A WiFi scanning plugin to extend RaspAP's functionality
+ * @author      borisbu
  */
 
-namespace RaspAP\Plugins\SamplePlugin;
+namespace RaspAP\Plugins\RaspAPWifiScanner;
 
 use RaspAP\Plugins\PluginInterface;
 use RaspAP\UI\Sidebar;
 
-class SamplePlugin implements PluginInterface
+class RaspAPWifiScanner implements PluginInterface
 {
 
     private string $pluginPath;
@@ -49,10 +38,10 @@ class SamplePlugin implements PluginInterface
     }
 
     /**
-     * Initializes SamplePlugin and creates a custom sidebar item. This is the entry point
+     * Initializes RaspAPWifiScanner and creates a custom sidebar item. This is the entry point
      * for creating a custom user plugin; the PluginManager will autoload the plugin code.
      *
-     * Replace 'Sample Plugin' below with the label you wish to use in the sidebar.
+     * Replace 'WiFi Scanner' below with the label you wish to use in the sidebar.
      * You may specify any icon in the Font Awesome 6.6 free library for the sidebar item.
      * The priority value sets the position of the item in the sidebar (lower values = higher priority).
      * The page action is handled by the plugin's namespaced handlePageAction() method.
@@ -64,8 +53,8 @@ class SamplePlugin implements PluginInterface
     public function initialize(Sidebar $sidebar): void
     {
 
-        $label = _('Sample Plugin');
-        $icon = 'fas fa-plug';
+        $label = _('WiFi Scanner');
+        $icon = 'fas fa-wifi';
         $action = 'plugin__'.$this->getName();
         $priority = 65;
 
@@ -176,7 +165,7 @@ class SamplePlugin implements PluginInterface
     }
 
     /**
-     * Saves SamplePlugin settings
+     * Saves RaspAPWifiScanner settings
      *
      * @param object status
      * @param string $apiKey
