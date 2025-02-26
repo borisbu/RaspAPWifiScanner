@@ -1,58 +1,148 @@
+<?php ob_start() ?>
+    <?php if (!RASPI_MONITOR_ENABLED) : ?>
+        <button type="submit" class="btn btn-outline btn-primary" name="scan">
+            <i class="fas fa-sync-alt me-2"></i><?php echo _("Scan for Networks"); ?>
+        </button>
+    <?php endif ?>
+<?php $buttons = ob_get_clean(); ob_end_clean() ?>
+
 <div class="row" id="wifiClientContent">
   <div class="col-lg-12">
-    <div class="card">
-      <div class="card-header">
-        <div class="row align-items-center">
-          <div class="col">
-            <i class="fas fa-wifi me-2"></i><?php echo _("WiFi client"); ?>
-          </div>
-            <div class="col">
-              <button class="btn btn-light btn-icon-split btn-sm service-status float-end">
-                <span class="icon"><i class="fas fa-circle service-status-<?php echo $ifaceStatus ?>"></i></span>
-                <span class="text service-status"><?php echo strtolower($clientInterface) .' '. _($ifaceStatus) ?></span>
-              </button>
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col">
+                        <i class="<?php echo $__template_data['icon']; ?> me-2"></i><?php echo htmlspecialchars($__template_data['title']); ?>
+                    </div>
+                </div>
             </div>
-        </div><!-- /.row -->
-      </div><!-- /.card-header -->
-      <div class="card-body">
-        <?php $status->showMessages(); ?>
-        <div class="row align-items-center">
-          <div class="col">
-            <h4 class="m-0 text-nowrap"><?php echo _("Client settings"); ?></h4>
-          </div>
-          <div class="col">
-            <button type="button" class="btn btn-info float-end js-reload-wifi-stations"><?php echo _("Rescan"); ?></button>
-          </div>
-        </div>
-        <div class="row" id="wpaConf">
-          <div class="col">
-            <form method="POST" action="wpa_conf" name="wpa_conf_form">
-              <?php echo CSRFTokenFieldTag() ?>
-              <input type="hidden" name="client_settings" ?>
-              <div class="js-wifi-stations loading-spinner"></div>
-            </form>
-          </div>
-        </div>
-      </div><!-- ./ card-body -->
-      <div class="card-footer"><?php echo _("<strong>Note:</strong> WEP access points appear as 'Open'. RaspAP does not currently support connecting to WEP"); ?></div>
-    </div><!-- /.card -->
-  </div><!-- /.col-lg-12 -->
-</div><!-- /.row -->
+            <div class="card-body">
+                <?php $status->showMessages(); ?>
+                <form role="form" action="<?php echo $__template_data['action']; ?>" method="POST">
+                    <?php echo CSRFTokenFieldTag() ?>
+                    
+                    <!-- Interface Selection -->
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <label for="interface" class="form-label"><?php echo _("WiFi Interface"); ?></label>
+                            <?php if (!empty($__template_data['availableInterfaces'])) : ?>
+                                <div class="input-group">
+                                    <select class="form-select" id="interface" name="interface">
+                                        <?php foreach ($__template_data['availableInterfaces'] as $iface) : ?>
+                                            <?php 
+                                                $info = $__template_data['interfaceInfo'][$iface];
+                                                $displayText = htmlspecialchars($iface);
+                                                if ($info['status'] === 'up' && !empty($info['ssid'])) {
+                                                    $displayText .= ' (' . htmlspecialchars($info['ssid']) . ')';
+                                                }
+                                            ?>
+                                            <option value="<?php echo htmlspecialchars($iface); ?>" 
+                                                    <?php echo $iface === $__template_data['selectedInterface'] ? 'selected' : ''; ?>>
+                                                <?php echo $displayText; ?>
+                                            </option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                    <button type="submit" class="btn btn-primary" name="scan">
+                                        <i class="fas fa-sync-alt me-2"></i><?php echo _("Scan"); ?>
+                                    </button>
+                                </div>
+                            <?php else : ?>
+                                <div class="alert alert-warning">
+                                    <?php echo _("No wireless interfaces available for scanning"); ?>
+                                </div>
+                            <?php endif; ?>
+                        </div>
+                    </div>
 
-<!-- Modal -->
-<div class="modal fade" id="configureClientModal" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-      <div class="modal-title" id="ModalLabel"><i class="fas fa-sync-alt me-2"></i><?php echo _("Configuring WiFi Client"); ?></div>
-      </div>
-      <div class="modal-body">
-        <div class="col-md-12 mb-3 mt-1"><?php echo _("Configuring Wifi Client Interface..."); ?></div>
-      </div>
-      <div class="modal-footer">
-      <button type="button" class="btn btn-outline btn-primary" data-bs-dismiss="modal"><?php echo _("Close"); ?></button>
-      </div>
+                    <!-- Network Scan Results Table -->
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th><?php echo _("Network"); ?></th>
+                                    <th><?php echo _("Channel"); ?></th>
+                                    <th><?php echo _("Frequency"); ?></th>
+                                    <th><?php echo _("Signal"); ?></th>
+                                    <th><?php echo _("Security"); ?></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php if (!empty($__template_data['scanResults'])) : ?>
+                                    <?php foreach ($__template_data['scanResults'] as $network) : ?>
+                                        <tr>
+                                            <td>
+                                                <strong><?php echo htmlspecialchars($network['ssid']); ?></strong>
+                                            </td>
+                                            <td><?php echo htmlspecialchars($network['channel']); ?></td>
+                                            <td>
+                                                <?php if ($network['frequency']) : ?>
+                                                    <?php echo htmlspecialchars($network['frequency']); ?> GHz
+                                                <?php endif; ?>
+                                            </td>
+                                            <td>
+                                                <div class="signal-strength">
+                                                    <?php
+                                                        $signalClass = 'bg-danger';
+                                                        if ($network['quality'] >= 70) $signalClass = 'bg-success';
+                                                        elseif ($network['quality'] >= 40) $signalClass = 'bg-warning';
+                                                    ?>
+                                                    <div class="progress" style="width: 100px;">
+                                                        <div class="progress-bar <?php echo $signalClass; ?>" 
+                                                             role="progressbar" 
+                                                             style="width: <?php echo $network['quality']; ?>%"
+                                                             aria-valuenow="<?php echo $network['quality']; ?>" 
+                                                             aria-valuemin="0" 
+                                                             aria-valuemax="100">
+                                                        </div>
+                                                    </div>
+                                                    <small><?php echo $network['signal']; ?> dBm</small>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <?php if ($network['encryption'] === 'none') : ?>
+                                                    <span class="badge bg-danger"><?php echo _("Open"); ?></span>
+                                                <?php else : ?>
+                                                    <span class="badge bg-success">
+                                                        <?php echo htmlspecialchars($network['encryption']); ?>
+                                                    </span>
+                                                <?php endif; ?>
+                                            </td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                <?php else : ?>
+                                    <tr>
+                                        <td colspan="5" class="text-center">
+                                            <?php if (empty($__template_data['scanResults'])) : ?>
+                                                <?php echo _("No networks found. Click Scan to search for nearby networks."); ?>
+                                            <?php else : ?>
+                                                <?php echo _("No networks found"); ?>
+                                            <?php endif; ?>
+                                        </td>
+                                    </tr>
+                                <?php endif; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
-  </div>
 </div>
+
+<!-- Add some custom styles -->
+<style>
+.signal-strength {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.signal-strength .progress {
+    margin-bottom: 0;
+    height: 0.5rem;
+}
+.signal-strength small {
+    color: #6c757d;
+    min-width: 55px;
+}
+</style>
 
